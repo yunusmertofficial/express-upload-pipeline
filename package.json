@@ -1,15 +1,28 @@
 {
   "name": "express-upload-pipeline",
-  "version": "1.0.2",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.3",
+  "description": "A dynamic and developer-friendly file upload helper for Express + Multer.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "express",
+    "multer",
+    "upload",
+    "middleware",
+    "file",
+    "formdata",
+    "parser",
+    "pipeline"
+  ],
+  "author": "Yunus",
+  "license": "MIT",
   "devDependencies": {
     "@types/express": "^5.0.1",
     "@types/multer": "^1.4.12",
