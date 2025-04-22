@@ -4,20 +4,32 @@ export function parseArrayFieldDynamic(fieldPrefix: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     const files = req.files as { [key: string]: Express.Multer.File[] };
     const body = req.body;
-    const regex = new RegExp(`^${fieldPrefix}\\[(\\d+)\\]\\.file$`);
-    const items: any[] = [];
+    const items: Record<string, any>[] = [];
 
-    const matchedIndexes = Object.keys(files)
-      .map((key) => {
-        const match = key.match(regex);
-        return match ? Number(match[1]) : null;
-      })
-      .filter((n): n is number => n !== null);
+    // Tüm body key'lerini tara
+    for (const key in body) {
+      const match = key.match(
+        new RegExp(`^${fieldPrefix}\\[(\\d+)\\]\\.([^\\.]+)$`)
+      );
+      if (!match) continue;
 
-    for (const i of matchedIndexes) {
-      const id = body?.[`${fieldPrefix}[${i}].id`];
-      const file = files?.[`${fieldPrefix}[${i}].file`]?.[0];
-      items.push({ id: id ? Number(id) : undefined, file });
+      const index = Number(match[1]);
+      const prop = match[2];
+
+      if (!items[index]) items[index] = {};
+      items[index][prop] = body[key];
+    }
+
+    // Dosyaları ekle
+    for (const key in files) {
+      const match = key.match(
+        new RegExp(`^${fieldPrefix}\\[(\\d+)\\]\\.file$`)
+      );
+      if (!match) continue;
+
+      const index = Number(match[1]);
+      if (!items[index]) items[index] = {};
+      items[index]["file"] = files[key][0]; // tek dosya
     }
 
     (req as any).parsedFiles = {
